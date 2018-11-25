@@ -10,12 +10,16 @@ from logger import set_info_logging
 from custom_exception import PlayerInputError
 from custom_exception import PlayerNameError
 
+from enemy import Enemy
+from thread_enemy import EnemyThread
+
 
 class DungeonGame:
 
     def __init__(self):
         self.my_game_step = GameStep()
         self.my_player = Player()
+        self.my_enemy = Enemy()
 
 
     @debug_decorator
@@ -23,7 +27,8 @@ class DungeonGame:
     def save_game(self):
 
         file = open('savefile.txt', 'wb')
-        to_save = (self.my_game_step.get_to_save_data(), self.my_player.name, self.my_player.position)
+        to_save = (self.my_game_step.get_to_save_data(), self.my_player.name, self.my_player.position,
+        self.my_enemy.position)
 
         pickle.dump(to_save, file)
 
@@ -44,6 +49,7 @@ class DungeonGame:
         self.my_game_step.set_loaded_data(loaded[0]) 
         self.my_player.name = loaded[1]
         self.my_player.position = loaded[2]
+        self.my_enemy.position = loaded[3]
 
         file.close()
 
@@ -68,6 +74,7 @@ class DungeonGame:
 
         self.my_player.set_player_name(player_name)
         self.my_player.spawn_player(self.my_game_step.my_game_map)
+        self.my_enemy.spawn(self.my_game_step.my_game_map)
 
 
     @debug_decorator
@@ -108,7 +115,7 @@ class DungeonGame:
             elif direction == 'exit':
                 exit()
             else:
-                self.my_game_step.perform_next_step(direction, self.my_player)
+                self.my_game_step.perform_next_step(direction, self.my_player, self.my_enemy)
             
         self.my_game_step.print_game_result(self.my_player)
         self.my_game_step.print_game_map(self.my_player.position)
@@ -117,7 +124,11 @@ class DungeonGame:
 set_debug_logging()
 set_info_logging()
 
+
+
+
 game = DungeonGame()
+
 
 while True:
 
@@ -140,4 +151,6 @@ if new_or_load == 'n' or new_or_load == 'new':
 else:
     game.load_game()
 
+enemy_move_thread = EnemyThread(1, "Enemy_Move_Thread", game.my_enemy, game.my_game_step.my_game_map.mapsize)
+enemy_move_thread.start()
 game.process_game()

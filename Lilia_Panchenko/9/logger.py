@@ -11,7 +11,7 @@ def set_debug_logging():
 
     global is_debug
 
-    inp_debug = input("Do you want to debug game? [yes / no]: ")
+    inp_debug = input("Do you want to debug game? [(Y)es / (N)o]: ")
     inp_debug = inp_debug.casefold()
 
     available_answer = ['y', 'n', 'yes', 'no']
@@ -31,7 +31,7 @@ def set_info_logging():
 
     global is_info
 
-    inp_info = input("Do you want to output logs for game? [yes / no]: ")
+    inp_info = input("Do you want to output logs for game? [(Y)es / (N)o]: ")
     inp_info = inp_info.casefold()
 
     available_answer = ['y', 'n', 'yes', 'no']

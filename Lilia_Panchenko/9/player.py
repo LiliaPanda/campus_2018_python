@@ -29,7 +29,7 @@ class Player:
 
     @debug_decorator
     @info_decorator
-    def pick_trap(self):
+    def lose_hp(self):
 
         self.hp -= 1
         if self.hp <= 0:

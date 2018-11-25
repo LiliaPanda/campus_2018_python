@@ -109,7 +109,7 @@ class GameStep:
 
     @debug_decorator
     @info_decorator
-    def perform_next_step(self, direction, player):
+    def perform_next_step(self, direction, player, enemy):
 
         old_position = list(player.position)
 
@@ -117,6 +117,13 @@ class GameStep:
 
         player.position[0] += direction_to_move[0]
         player.position[1] += direction_to_move[1]
+
+        player_is_attacked = enemy.is_attacked_player(player)
+        if player_is_attacked:
+            print("Enemy attacked player")
+            enemy.respawn()
+            player.lose_hp()
+
 
         if player.position[0] < 0 or player.position[1] < 0 or \
             player.position[0] >= self.my_game_map.mapsize or player.position[1] >= self.my_game_map.mapsize:
@@ -132,7 +139,7 @@ class GameStep:
         row, col = player.position
 
         if self.my_game_map.game_map[row][col] == -1:
-            player.pick_trap()
+            player.lose_hp()
             self.my_game_map.game_map[row][col] = 0
 
         if self.my_game_map.game_map[row][col] == 1:
